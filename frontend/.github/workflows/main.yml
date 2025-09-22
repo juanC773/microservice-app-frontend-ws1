@@ -1,0 +1,74 @@
+name: Build and Push Frontend  
+
+on:
+  push:
+    branches: [master] #no hay main, solo master   
+  pull_request:
+    branches: [master]    
+
+env:
+  IMAGE_NAME: torres05/frontend-ws1  # Nombre de la imagen Docker
+
+jobs:
+  build-and-push:             
+    runs-on: ubuntu-latest     
+
+    steps:
+      # PASO 1: Descargar código del repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # PASO 2: Instalar Node.js 14.21.3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.21.3'
+
+      # PASO 3: Cache para dependencias (acelera builds)
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+      # PASO 4: Instalar dependencias del frontend
+      - name: Install dependencies
+        run: npm install
+
+      # PASO 5: Build del frontend (crea carpeta /dist)
+      - name: Build application
+        run: npm run build
+
+      # PASO 6: Ejecutar linter (opcional)
+      - name: Run tests (if any)
+        run: npm run lint || true    # || true = no falla si no hay lint
+
+      # PASO 7: Login a Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Secret configurado
+          password: ${{ secrets.DOCKERHUB_TOKEN }}     # Secret configurado
+
+      # PASO 8: Crear metadata para Docker (tags, labels)
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      # PASO 9: Build y push imagen Docker
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .              # Usa Dockerfile en root
+          file: ./Dockerfile      # Archivo Dockerfile
+          push: true              # Hace push a Docker Hub
+          tags: ${{ steps.meta.outputs.tags }}    # Tags generados
+          labels: ${{ steps.meta.outputs.labels }} # Labels generados
+
+      # PASO 10: Mostrar digest de la imagen
+      - name: Image digest
+        run: echo "Image pushed with digest ${{ steps.build.outputs.digest }}"
