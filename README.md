@@ -22,33 +22,42 @@ The service uses environment variables for API endpoints:
 
 **PowerShell (Windows):**
 ```powershell
-$env:AUTH_API_ADDRESS="http://127.0.0.1:8000"; npm install; npm run dev
+$env:AUTH_API_ADDRESS="http://127.0.0.1:8000"; $env:TODOS_API_ADDRESS="http://127.0.0.1:8082"; npm install; npm run dev
 ```
 
 **CMD (Windows):**
 ```cmd
-set AUTH_API_ADDRESS=http://127.0.0.1:8000 && npm install && npm run dev
+set AUTH_API_ADDRESS=http://127.0.0.1:8000 && set TODOS_API_ADDRESS=http://127.0.0.1:8082 && npm install && npm run dev
 ```
 
 **Linux/macOS/Git Bash:**
 ```bash
-AUTH_API_ADDRESS=http://127.0.0.1:8000 npm run dev
+AUTH_API_ADDRESS=http://127.0.0.1:8000 TODOS_API_ADDRESS=http://127.0.0.1:8082 npm run dev
 ```
 
 App runs on http://localhost:8080
 
 ## Testing
 
-With Auth and Users APIs running locally, test with these credentials:
+With Redis, Auth API, Users API, and TODOs API running locally, test with these credentials:
 - Username: `admin`, Password: `admin`
 - Username: `johnd`, Password: `foo`
 - Username: `janed`, Password: `ddd`
+
+Complete local stack for testing:
+```bash
+# Required services
+docker run -d -p 6379:6379 --name redis redis:7.0
+docker run -d -p 8083:8083 -e JWT_SECRET=PRFT -e SERVER_PORT=8083 --name users-api torres05/users-api-ws1:latest
+docker run -d -p 8000:8000 -e JWT_SECRET=PRFT -e AUTH_API_PORT=8000 -e USERS_API_ADDRESS=http://host.docker.internal:8083 --name auth-api torres05/auth-api-ws1:latest
+docker run -d -p 8082:8082 -e JWT_SECRET=PRFT -e TODO_API_PORT=8082 -e REDIS_HOST=host.docker.internal -e REDIS_PORT=6379 -e REDIS_CHANNEL=log_channel --name todos-api torres05/todos-api-ws1:latest
+```
 
 ## Run with Docker
 
 ```bash
 docker build -t juanc7773/frontend-ws1 .
-docker run -p 8080:80 -e AUTH_API_ADDRESS=http://127.0.0.1:8000 juanc7773/frontend-ws1
+docker run -p 8080:80 -e AUTH_API_ADDRESS=http://127.0.0.1:8000 -e TODOS_API_ADDRESS=http://127.0.0.1:8082 juanc7773/frontend-ws1
 ```
 
 ## CI/CD Pipeline
@@ -70,8 +79,8 @@ docker run -p 8080:80 -e AUTH_API_ADDRESS=http://127.0.0.1:8000 juanc7773/fronte
 ## Infrastructure (Terraform)
 
 Deploys to Azure Container Apps with environment variables:
-- **Local:** `AUTH_API_ADDRESS=http://127.0.0.1:8000`
-- **Azure:** `AUTH_API_ADDRESS=https://auth-app.microservices-env.westeurope.azurecontainerapps.io`
+- **Local:** `AUTH_API_ADDRESS=http://127.0.0.1:8000`, `TODOS_API_ADDRESS=http://127.0.0.1:8082`
+- **Azure:** `AUTH_API_ADDRESS=https://auth-app.microservices-env.westeurope.azurecontainerapps.io`, `TODOS_API_ADDRESS=https://todos-app.microservices-env.westeurope.azurecontainerapps.io`
 
 ## Key Files
 
