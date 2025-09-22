@@ -7,7 +7,7 @@ on:
     branches: [master]    
 
 env:
-  IMAGE_NAME: juanc773/frontend-ws1  # Nombre de la imagen Docker (usuario_dockerhub/nombre repo)
+  IMAGE_NAME: juanc7773/frontend-ws1  # Nombre de la imagen Docker (usuario_dockerhub/nombre repo)
 
 jobs:
   build-and-push:             
