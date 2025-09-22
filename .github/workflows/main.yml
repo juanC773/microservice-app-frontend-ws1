@@ -59,15 +59,18 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
 
-      # PASO 9: Build y push imagen Docker
+     # PASO 9: Build y push imagen Docker
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .              # Usa Dockerfile en root
-          file: ./Dockerfile      # Archivo Dockerfile
-          push: true              # Hace push a Docker Hub
-          tags: ${{ steps.meta.outputs.tags }}    # Tags generados
-          labels: ${{ steps.meta.outputs.labels }} # Labels generados
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |                                  
+            AUTH_API_ADDRESS=https://auth-app.microservices-env.westeurope.azurecontainerapps.io
+            ZIPKIN_URL=http://127.0.0.1:9411/api/v2/spans
 
       # PASO 10: Mostrar digest de la imagen
       - name: Image digest

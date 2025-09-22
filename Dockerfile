@@ -1,4 +1,3 @@
-
 FROM node:14.21.3-alpine AS builder
 
 WORKDIR /app
@@ -12,7 +11,13 @@ RUN npm install
 # Copiar código fuente
 COPY . .
 
-# Build para producción
+# Build para producción con variables de entorno
+ARG AUTH_API_ADDRESS
+ARG ZIPKIN_URL
+
+ENV AUTH_API_ADDRESS=$AUTH_API_ADDRESS
+ENV ZIPKIN_URL=$ZIPKIN_URL
+
 RUN npm run build
 
 # Runtime con nginx
