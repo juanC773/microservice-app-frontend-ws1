@@ -1,17 +1,17 @@
-name: Build and Push Frontend  
+name: Build and Push Frontend
 
 on:
   push:
-    branches: [master] #no hay main, solo master   
+    branches: [master] #no hay main, solo master
   pull_request:
-    branches: [master]    
+    branches: [master]
 
 env:
-  IMAGE_NAME: juanc7773/frontend-ws1  # Nombre de la imagen Docker (usuario_dockerhub/nombre repo)
+  IMAGE_NAME: juanc7773/frontend-ws1 # Nombre de la imagen Docker (usuario_dockerhub/nombre repo)
 
 jobs:
-  build-and-push:             
-    runs-on: ubuntu-latest     
+  build-and-push:
+    runs-on: ubuntu-latest
 
     steps:
       # PASO 1: Descargar código del repo
@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '14.21.3'
+          node-version: "14.21.3"
 
       # PASO 3: Cache para dependencias (acelera builds)
       - name: Cache npm dependencies
@@ -41,14 +41,14 @@ jobs:
 
       # PASO 6: Ejecutar linter (opcional)
       - name: Run tests (if any)
-        run: npm run lint || true    # || true = no falla si no hay lint
+        run: npm run lint || true # || true = no falla si no hay lint
 
       # PASO 7: Login a Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Secret configurado
-          password: ${{ secrets.DOCKERHUB_TOKEN }}     # Secret configurado
+          username: ${{ secrets.DOCKERHUB_USERNAME }} # Secret configurado
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # Secret configurado
 
       # PASO 8: Crear metadata para Docker (tags, labels)
       - name: Extract metadata (tags, labels) for Docker
@@ -59,7 +59,7 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
 
-     # PASO 9: Build y push imagen Docker
+      # PASO 9: Build y push imagen Docker
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -68,10 +68,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |                                  
-            AUTH_API_ADDRESS=https://auth-app.microservices-env.westeurope.azurecontainerapps.io
-            ZIPKIN_URL=http://127.0.0.1:9411/api/v2/spans
 
       # PASO 10: Mostrar digest de la imagen
       - name: Image digest
-        run: echo "Image pushed with digest ${{ steps.build.outputs.digest }}"
+        run: echo "Image pushed with digest ${{ steps.build.outputs.digest }}
