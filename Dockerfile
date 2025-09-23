@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # Runtime con nginx
-FROM nginx:al   
+FROM nginx:1.25-alpine 
 
 # Copiar archivos build
 COPY --from=builder /app/dist /usr/share/nginx/html
