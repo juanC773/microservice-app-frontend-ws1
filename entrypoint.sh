@@ -18,3 +18,5 @@ echo "URLs configuradas exitosamente"
 
 # Iniciar nginx
 exec nginx -g "daemon off;"
+
+#.
