@@ -68,7 +68,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      # PASO 10: Mostrar digest de la imagen
-      - name: Image digest
-        run: echo "Image pushed with digest ${{ steps.build.outputs.digest }}
