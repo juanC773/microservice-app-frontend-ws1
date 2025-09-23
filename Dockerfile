@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # Runtime con nginx
-FROM nginx:alpine
+FROM nginx:al   
 
 # Copiar archivos build
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -22,6 +22,11 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Configuración nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
+COPY entrypoint.sh /entrypoint.sh
+
+# Hacer el script ejecutable
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/entrypoint.sh"]
