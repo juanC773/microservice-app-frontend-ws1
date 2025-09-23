@@ -11,13 +11,6 @@ RUN npm install
 # Copiar código fuente
 COPY . .
 
-# Build para producción con variables de entorno
-ARG AUTH_API_ADDRESS
-ARG TODOS_API_ADDRESS
-
-ENV AUTH_API_ADDRESS=$AUTH_API_ADDRESS
-ENV TODOS_API_ADDRESS=$TODOS_API_ADDRESS
-
 RUN npm run build
 
 # Runtime con nginx
