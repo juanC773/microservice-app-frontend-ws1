@@ -89,7 +89,7 @@ export default {
 
       const todosApiUrl = process.env.TODOS_API_ADDRESS 
 
-      this.$http.get(todosApiUrl+'/todos').then(response => {
+      this.$http.get(todosApiUrl + '/todos').then(response => {
         for (var i in response.body) {
           this.tasks.push(response.body[i])
         }
@@ -111,7 +111,7 @@ export default {
 
         const todosApiUrl = process.env.TODOS_API_ADDRESS
 
-        this.$http.post(todosApiUrl+'/todos', task).then(response => {
+        this.$http.post(todosApiUrl + '/todos', task).then(response => {
           this.newTask = ''
           this.isProcessing = false
           this.tasks.push(task)
@@ -130,7 +130,7 @@ export default {
 
       const todosApiUrl = process.env.TODOS_API_ADDRESS
 
-      this.$http.delete(todosApiUrl+'/todos/' + item.id).then(response => {
+      this.$http.delete(todosApiUrl + '/todos/' + item.id).then(response => {
         this.isProcessing = false
         this.tasks.splice(index, 1)
       }, error => {
