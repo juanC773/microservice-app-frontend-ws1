@@ -6,7 +6,7 @@ import {
 } from 'zipkin'
 import {HttpLogger} from 'zipkin-transport-http'
 import {zipkinInterceptor} from 'zipkin-instrumentation-vue-resource'
-const ZIPKIN_URL =  null
+const ZIPKIN_URL = null
 /**
 * Tracing plugin that uses Zipkin. Initiates new traces with outgoing requests
 * and injects appropriate headers.

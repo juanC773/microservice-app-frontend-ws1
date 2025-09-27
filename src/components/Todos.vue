@@ -87,8 +87,7 @@ export default {
       this.isProcessing = true
       this.errorMessage = ''
 
-      const todosApiUrl = process.env.TODOS_API_ADDRESS 
-
+      const todosApiUrl = process.env.TODOS_API_ADDRESS
       this.$http.get(todosApiUrl + '/todos').then(response => {
         for (var i in response.body) {
           this.tasks.push(response.body[i])
