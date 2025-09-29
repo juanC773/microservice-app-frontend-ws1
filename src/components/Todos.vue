@@ -87,7 +87,7 @@ export default {
       this.isProcessing = true
       this.errorMessage = ''
 
-      const todosApiUrl = process.env.TODOS_API_ADDRESS
+      const todosApiUrl = '__TODOS_API_ADDRESS__'
       this.$http.get(todosApiUrl + '/todos').then(response => {
         for (var i in response.body) {
           this.tasks.push(response.body[i])
@@ -108,7 +108,7 @@ export default {
           content: this.newTask
         }
 
-        const todosApiUrl = process.env.TODOS_API_ADDRESS
+        const todosApiUrl = '__TODOS_API_ADDRESS__'
 
         this.$http.post(todosApiUrl + '/todos', task).then(response => {
           this.newTask = ''
@@ -127,7 +127,7 @@ export default {
       this.isProcessing = true
       this.errorMessage = ''
 
-      const todosApiUrl = process.env.TODOS_API_ADDRESS
+      const todosApiUrl = '__TODOS_API_ADDRESS__'
 
       this.$http.delete(todosApiUrl + '/todos/' + item.id).then(response => {
         this.isProcessing = false
