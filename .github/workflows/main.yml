@@ -6,8 +6,8 @@ on:
     branches: [master]
 env:
   IMAGE_NAME: juanc7773/frontend-ws1
-  AZURE_CONTAINER_APP_NAME: tu-container-app-name
-  AZURE_RESOURCE_GROUP: tu-resource-group
+  AZURE_CONTAINER_APP_NAME: ${{ secrets.AZURE_RESOURCE_GROUP }}
+  AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
 
 jobs:
   build-and-push:
@@ -69,6 +69,6 @@ jobs:
       - name: Update Azure Container App
         run: |
           az containerapp update \
-            --name ${{ env.AZURE_CONTAINER_APP_NAME }} \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name ${{ secrets.AZURE_CONTAINER_APP_NAME }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --image ${{ env.IMAGE_NAME }}:latest
