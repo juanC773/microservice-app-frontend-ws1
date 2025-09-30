@@ -1,17 +1,20 @@
 name: Build and Push Frontend
+
 on:
   push:
     branches: [master]
   pull_request:
     branches: [master]
+
 env:
   IMAGE_NAME: juanc7773/frontend-ws1
-  AZURE_CONTAINER_APP_NAME: ${{ secrets.AZURE_RESOURCE_GROUP }}
+  AZURE_CONTAINER_APP_NAME: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
   AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,7 +51,8 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
+            type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -59,16 +63,14 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      # PASO 10: Login a Azure
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # PASO 11: Actualizar Container App
       - name: Update Azure Container App
         run: |
           az containerapp update \
-            --name ${{ secrets.AZURE_CONTAINER_APP_NAME }} \
-            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --image ${{ env.IMAGE_NAME }}:latest
+            --name ${{ env.AZURE_CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --image ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
